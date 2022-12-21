@@ -5,6 +5,8 @@ from d4rl import offline_env
 from d4rl.pointmaze.dynamic_mjc import MJCModel
 import numpy as np
 import random
+import mujoco_py
+from d4rl.pointmaze.maze_layouts import U_MAZE
 
 
 WALL = 10
@@ -79,85 +81,20 @@ def point_maze(maze_str):
     actuator.motor(joint="ball_x", ctrlrange=[-1.0, 1.0], ctrllimited=True, gear=100)
     actuator.motor(joint="ball_y", ctrlrange=[-1.0, 1.0], ctrllimited=True, gear=100)
 
+    # for topdown rendering
+    # worldbody.camera(mode="fixed", name="birdview", pos="11.5 11.5 29.0", quat="0.7071 0 0 0.7071")
+    # worldbody.camera(mode="fixed", name="birdview", pos="21.5 21.5 49.0", quat="0.7071 0 0 0.7071")
+
     return mjcmodel
 
 
-LARGE_MAZE = \
-        "############\\"+\
-        "#OOOO#OOOOO#\\"+\
-        "#O##O#O#O#O#\\"+\
-        "#OOOOOO#OOO#\\"+\
-        "#O####O###O#\\"+\
-        "#OO#O#OOOOO#\\"+\
-        "##O#O#O#O###\\"+\
-        "#OO#OOO#OGO#\\"+\
-        "############"
-
-LARGE_MAZE_EVAL = \
-        "############\\"+\
-        "#OO#OOO#OGO#\\"+\
-        "##O###O#O#O#\\"+\
-        "#OO#O#OOOOO#\\"+\
-        "#O##O#OO##O#\\"+\
-        "#OOOOOO#OOO#\\"+\
-        "#O##O#O#O###\\"+\
-        "#OOOO#OOOOO#\\"+\
-        "############"
-
-MEDIUM_MAZE = \
-        '########\\'+\
-        '#OO##OO#\\'+\
-        '#OO#OOO#\\'+\
-        '##OOO###\\'+\
-        '#OO#OOO#\\'+\
-        '#O#OO#O#\\'+\
-        '#OOO#OG#\\'+\
-        "########"
-
-MEDIUM_MAZE_EVAL = \
-        '########\\'+\
-        '#OOOOOG#\\'+\
-        '#O#O##O#\\'+\
-        '#OOOO#O#\\'+\
-        '###OO###\\'+\
-        '#OOOOOO#\\'+\
-        '#OO##OO#\\'+\
-        "########"
-
-SMALL_MAZE = \
-        "######\\"+\
-        "#OOOO#\\"+\
-        "#O##O#\\"+\
-        "#OOOO#\\"+\
-        "######"
-
-U_MAZE = \
-        "#####\\"+\
-        "#GOO#\\"+\
-        "###O#\\"+\
-        "#OOO#\\"+\
-        "#####"
-
-U_MAZE_EVAL = \
-        "#####\\"+\
-        "#OOG#\\"+\
-        "#O###\\"+\
-        "#OOO#\\"+\
-        "#####"
-
-OPEN = \
-        "#######\\"+\
-        "#OOOOO#\\"+\
-        "#OOGOO#\\"+\
-        "#OOOOO#\\"+\
-        "#######"
-
-
 class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
+    AGENT_CENTRIC_RES = 32
     def __init__(self,
                  maze_spec=U_MAZE,
                  reward_type='dense',
                  reset_target=False,
+                 agent_centric_view=False,
                  **kwargs):
         offline_env.OfflineEnv.__init__(self, **kwargs)
 
@@ -165,6 +102,7 @@ class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
         self.str_maze_spec = maze_spec
         self.maze_arr = parse_maze(maze_spec)
         self.reward_type = reward_type
+        self.agent_centric_view = agent_centric_view
         self.reset_locations = list(zip(*np.where(self.maze_arr == EMPTY)))
         self.reset_locations.sort()
 
@@ -194,13 +132,20 @@ class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
         self.set_marker()
         ob = self._get_obs()
         if self.reward_type == 'sparse':
-            reward = 1.0 if np.linalg.norm(ob[0:2] - self._target) <= 0.5 else 0.0
+            reward = 1.0 if np.linalg.norm(ob[0:2] - self._target) <= 2.0 else 0.0
         elif self.reward_type == 'dense':
             reward = np.exp(-np.linalg.norm(ob[0:2] - self._target))
         else:
             raise ValueError('Unknown reward type %s' % self.reward_type)
         done = False
         return ob, reward, done, {}
+
+    def render(self, mode, *args, **kwargs):
+        if self.agent_centric_view:
+            if 'width' not in kwargs and 'height' not in kwargs:
+                kwargs['width'] = self.AGENT_CENTRIC_RES
+                kwargs['height'] = self.AGENT_CENTRIC_RES
+        return super().render(mode, *args, **kwargs)
 
     def _get_obs(self):
         return np.concatenate([self.sim.data.qpos, self.sim.data.qvel]).ravel()
@@ -235,11 +180,21 @@ class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
     def reset_to_location(self, location):
         self.sim.reset()
         reset_location = np.array(location).astype(self.observation_space.dtype)
-        qpos = reset_location + self.np_random.uniform(low=-.1, high=.1, size=self.model.nq)
-        qvel = self.init_qvel + self.np_random.randn(self.model.nv) * .1
+        qpos = reset_location  # + self.np_random.uniform(low=-.1, high=.1, size=self.model.nq)
+        qvel = self.init_qvel  # + self.np_random.randn(self.model.nv) * .1
         self.set_state(qpos, qvel)
         return self._get_obs()
 
     def viewer_setup(self):
-        pass
+        if self.agent_centric_view:
+            self.viewer.cam.type = mujoco_py.generated.const.CAMERA_TRACKING
+            self.viewer.cam.distance = 5.0
+        else:
+            self.viewer.cam.distance = self.model.stat.extent * 1.0  # how much you "zoom in", model.stat.extent is the max limits of the arena
+        self.viewer.cam.trackbodyid = 0  # id of the body to track ()
+        self.viewer.cam.lookat[0] += 0.5  # x,y,z offset from the object (works if trackbodyid=-1)
+        self.viewer.cam.lookat[1] += 0.5
+        self.viewer.cam.lookat[2] += 0.5
+        self.viewer.cam.elevation = -90  # camera rotation around the axis in the plane going through the frame origin (if 0 you just see a line)
+        self.viewer.cam.azimuth = 0  # camera rotation around the camera's vertical axis
 
