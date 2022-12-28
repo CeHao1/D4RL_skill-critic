@@ -1,11 +1,12 @@
 import gym
 import logging
 from d4rl.pointmaze import waypoint_controller
-from d4rl.pointmaze import maze_model
+from d4rl.pointmaze import maze_model, maze_layouts
 import numpy as np
 import pickle
 import gzip
 import h5py
+import os
 import argparse
 
 
@@ -43,6 +44,8 @@ def main():
     parser.add_argument('--noisy', action='store_true', help='Noisy actions')
     parser.add_argument('--env_name', type=str, default='maze2d-umaze-v1', help='Maze type')
     parser.add_argument('--num_samples', type=int, default=int(1e6), help='Num samples to collect')
+    parser.add_argument('--data_dir', type=str, default='.', help='Base directory for dataset')
+    parser.add_argument('--batch_idx', type=int, default=int(-1), help='(Optional) Index of generated data batch')
     args = parser.parse_args()
 
     env = gym.make(args.env_name)
@@ -73,7 +76,7 @@ def main():
 
         ns, _, _, _ = env.step(act)
 
-        if len(data['observations']) % 10000 == 0:
+        if len(data['observations']) % 1000 == 0:
             print(len(data['observations']))
 
         ts += 1
@@ -87,11 +90,15 @@ def main():
         if args.render:
             env.render()
 
-    
-    if args.noisy:
-        fname = '%s-noisy.hdf5' % args.env_name
+    if args.batch_idx >= 0:
+        dir_name = 'maze2d-%s-noisy' % args.maze if args.noisy else 'maze2d-%s-sparse' % args.maze
+        os.makedirs(os.path.join(args.data_dir, dir_name), exist_ok=True)
+        fname = os.path.join(args.data_dir, dir_name, "rollouts_batch_{}.h5".format(args.batch_idx))
     else:
-        fname = '%s.hdf5' % args.env_name
+        os.makedirs(args.data_dir, exist_ok=True)
+        fname = 'maze2d-%s-noisy.hdf5' % args.maze if args.noisy else 'maze2d-%s-sparse.hdf5' % args.maze
+        fname = os.path.join(args.data_dir, fname)
+
     dataset = h5py.File(fname, 'w')
     npify(data)
     for k in data:
