@@ -3,6 +3,7 @@
 
 *.ipynb
 launch.json
+data_save
 
 .idea
 # Byte-compiled / optimized / DLL files

@@ -92,6 +92,7 @@ def main():
     data = reset_data()
     ts, cnt = 0, 0
     for tt in tqdm.tqdm(range(args.num_samples)):
+        # print('tt', tt)
         position = s[0:2]
         velocity = s[2:4]
 

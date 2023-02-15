@@ -1,4 +1,4 @@
-from d4rl.pointmaze import MazeEnv, maze_model
+from d4rl.pointmaze import MazeEnv, maze_model, maze_layouts
 from d4rl.offline_env import get_keys
 import os
 import argparse
@@ -15,13 +15,13 @@ if __name__ == "__main__":
 
 
     if args.maze == 'umaze':
-        maze = maze_model.U_MAZE
+        maze = maze_layouts.U_MAZE
     elif args.maze == 'open':
-        maze = maze_model.OPEN
+        maze = maze_layouts.OPEN
     elif args.maze == 'medium':
-        maze = maze_model.MEDIUM_MAZE
+        maze = maze_layouts.MEDIUM_MAZE
     else:
-        maze = maze_model.LARGE_MAZE
+        maze = maze_layouts.LARGE_MAZE
     env = MazeEnv(maze, reset_target=False, reward_type='sparse')
     target_goal = env._target
 
