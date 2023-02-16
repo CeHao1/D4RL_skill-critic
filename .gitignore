@@ -1,6 +1,6 @@
 
 
-
+*.mp4
 *.ipynb
 launch.json
 data_save

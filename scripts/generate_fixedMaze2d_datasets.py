@@ -9,6 +9,7 @@ import argparse
 import os
 import tqdm
 
+import time
 
 def reset_data():
     return {'states': [],
@@ -56,6 +57,7 @@ def reset_env(env, agent_centric=False):
 
 def save_video(file_name, frames, fps=20, video_format='mp4'):
     import skvideo.io
+    print('save video to', file_name)
     skvideo.io.vwrite(
         file_name,
         frames,
@@ -91,11 +93,11 @@ def main():
 
     data = reset_data()
     ts, cnt = 0, 0
+    
     for tt in tqdm.tqdm(range(args.num_samples)):
         # print('tt', tt)
         position = s[0:2]
         velocity = s[2:4]
-
         try:
             act, done = controller.get_action(position, velocity, env._target)
         except ValueError:
@@ -105,7 +107,6 @@ def main():
             s = reset_env(env, agent_centric=args.agent_centric)
             ts = 0
             continue
-
         if args.noisy:
             act = act + np.random.randn(*act.shape)*0.5
 
@@ -116,7 +117,6 @@ def main():
                     env._target, done, env.sim.data)
 
         ns, _, _, _ = env.step(act)
-
         ts += 1
         if done:
             if len(data['actions']) > args.min_traj_len:
@@ -134,7 +134,7 @@ def main():
 
 
 def save_data(args, data, idx):
-    # save_video("seq_{}_ac.mp4".format(idx), data['images'])
+    save_video("seq_{}_ac.mp4".format(idx), data['images'])
     dir_name = ''
     if args.batch_idx >= 0:
         dir_name = os.path.join(dir_name, "batch_{}".format(args.batch_idx))
