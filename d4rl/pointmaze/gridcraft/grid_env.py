@@ -203,8 +203,14 @@ class GridEnv(gym.Env):
         ds = self.num_states
         da = self.num_actions
         rew_matrix = np.zeros((ds, da, ds))
+        '''
         for s in range(ds):
             for a in range(da):
                 for ns in range(ds):
                     rew_matrix[s, a, ns] = self.rew_fn(self.gs, s, a, ns)
+        '''
+
+        for s in range(ds):
+            rew_matrix[s, :, :] = self.rew_fn(self.gs, s, a=None, ns=None)
+
         return rew_matrix
