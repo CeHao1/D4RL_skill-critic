@@ -165,6 +165,7 @@ def save_data(args, data, idx):
     pad_mask[:is_terminal_idxs[0]] = 1.
     traj_data.create_dataset("pad_mask", data=pad_mask)
 
+    traj_data.create_dataset("goal", data=data['infos/goal'])
     f.close()
 
 
