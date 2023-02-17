@@ -125,7 +125,7 @@ def sample_2d(probs, rng):
     return idxs[0][0], idxs[1][0]
 
 
-def place_wall(maze_layout, rng, min_len_frac, max_len_frac, temp):
+def place_wall(maze_layout, rng, min_len_frac, max_len_frac, temp, T_wall=True):
     """Samples wall such that overlap with other walls is minimized (overlap is determined by temperature).
        Also adds one door per wall."""
     size = maze_layout.shape[0]
@@ -142,10 +142,11 @@ def place_wall(maze_layout, rng, min_len_frac, max_len_frac, temp):
 
         maze_layout[sample_pos1 : sample_pos1 + sample_len, sample_pos2] = 1
         maze_layout[sample_pos1 + sample_door_offset, sample_pos2] = 0
-        maze_layout[sample_pos1 + sample_door_offset - 1, sample_pos2 + 1] = 1
-        maze_layout[sample_pos1 + sample_door_offset - 1, sample_pos2 - 1] = 1
-        maze_layout[sample_pos1 + sample_door_offset + 1, sample_pos2 + 1] = 1
-        maze_layout[sample_pos1 + sample_door_offset + 1, sample_pos2 - 1] = 1
+        if T_wall:
+            maze_layout[sample_pos1 + sample_door_offset - 1, sample_pos2 + 1] = 1
+            maze_layout[sample_pos1 + sample_door_offset - 1, sample_pos2 - 1] = 1
+            maze_layout[sample_pos1 + sample_door_offset + 1, sample_pos2 + 1] = 1
+            maze_layout[sample_pos1 + sample_door_offset + 1, sample_pos2 - 1] = 1
     else:
         filter = np.ones((5, sample_len)) / (5 * sample_len)
         probs = compute_sampling_probs(maze_layout, filter, temp)
@@ -155,10 +156,11 @@ def place_wall(maze_layout, rng, min_len_frac, max_len_frac, temp):
 
         maze_layout[sample_pos2, sample_pos1: sample_pos1 + sample_len] = 1
         maze_layout[sample_pos2, sample_pos1 + sample_door_offset] = 0
-        maze_layout[sample_pos2 + 1, sample_pos1 + sample_door_offset - 1] = 1
-        maze_layout[sample_pos2 - 1, sample_pos1 + sample_door_offset - 1] = 1
-        maze_layout[sample_pos2 + 1, sample_pos1 + sample_door_offset + 1] = 1
-        maze_layout[sample_pos2 - 1, sample_pos1 + sample_door_offset + 1] = 1
+        if T_wall:
+            maze_layout[sample_pos2 + 1, sample_pos1 + sample_door_offset - 1] = 1
+            maze_layout[sample_pos2 - 1, sample_pos1 + sample_door_offset - 1] = 1
+            maze_layout[sample_pos2 + 1, sample_pos1 + sample_door_offset + 1] = 1
+            maze_layout[sample_pos2 - 1, sample_pos1 + sample_door_offset + 1] = 1
     return maze_layout
 
 
@@ -167,7 +169,8 @@ def sample_layout(seed=None,
                   max_len_frac=0.5,
                   min_len_frac=0.3,
                   coverage_frac=0.25,
-                  temp=20):
+                  temp=20,
+                  T_wall_prob=1):
     """
     Generates maze layout with randomly placed walls.
     :param seed: if not None, makes maze layout reproducible
@@ -182,7 +185,8 @@ def sample_layout(seed=None,
     maze_layout = np.zeros((size, size))
 
     while np.mean(maze_layout) < coverage_frac:
-        maze_layout = place_wall(maze_layout, rng, min_len_frac, max_len_frac, temp)
+        T_wall = np.random.rand() < T_wall_prob
+        maze_layout = place_wall(maze_layout, rng, min_len_frac, max_len_frac, temp, T_wall)
 
     return maze_layout
 

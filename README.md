@@ -1,7 +1,7 @@
 
 # example code
 python3 scripts/generate_randMaze2d_datasets.py --render --agent_centric --save_images --data_dir='./data_save'
-
+python3 scripts/generate_Twall_Maze2d_datasets.py --render --data_dir='./data_save'
 
 
 <p align="center">
