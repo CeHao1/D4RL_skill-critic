@@ -134,8 +134,9 @@ def main():
             env.render(mode='human')
 
 
+
 def save_data(args, data, idx):
-    save_video("seq_{}_ac.mp4".format(idx), data['images'])
+    # save_video("seq_{}_ac.mp4".format(idx), data['images'])
     dir_name = ''
     if args.batch_idx >= 0:
         dir_name = os.path.join(dir_name, "batch_{}".format(args.batch_idx))
@@ -169,6 +170,11 @@ def save_data(args, data, idx):
     traj_data.create_dataset("goal", data=data['infos/goal'])
     f.close()
 
+def plot_image(image):
+    import matplotlib.pyplot as plt
+    plt.figure()
+    plt.imshow(image)
+    plt.show
 
 if __name__ == "__main__":
     main()
