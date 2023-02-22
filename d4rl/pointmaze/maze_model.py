@@ -56,7 +56,7 @@ def point_maze(maze_str):
     visual.quality(shadowsize=2048)
 
     worldbody = mjcmodel.root.worldbody()
-    worldbody.geom(name='ground',size="40 40 0.25",pos="0 0 -0.1",type="plane",contype=1,conaffinity=0,material="groundplane")
+    worldbody.geom(name='ground',size="50 50 0.25",pos="0 0 -0.1",type="plane",contype=1,conaffinity=0,material="groundplane")
 
     particle = worldbody.body(name='particle', pos=[1.2,1.2,0])
     particle.geom(name='particle_geom', type='sphere', size=0.1, rgba='0.0 0.0 1.0 0.0', contype=1)
