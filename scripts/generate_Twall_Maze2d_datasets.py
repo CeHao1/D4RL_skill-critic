@@ -41,7 +41,9 @@ def npify(data):
 
 
 def sample_env_and_controller(args):
-    layout_str = maze_layouts.rand_layout(seed=args.seed, size=args.fixed_maze_size, T_wall_prob=args.Twall_prob)
+    layout_str = maze_layouts.rand_layout(seed=args.seed, size=args.fixed_maze_size, 
+                                          coverage_frac = args.coverage_frac,
+                                          T_wall_prob=args.Twall_prob, sample_vert_hor_prob=args.sample_vert_hor_prob)
     env = maze_model.MazeEnv(layout_str, agent_centric_view=args.agent_centric)
     controller = waypoint_controller.WaypointController(layout_str)
     return env, controller
@@ -82,7 +84,8 @@ def main():
     parser.add_argument('--min_traj_len', type=int, default=int(50), help='Min number of samples per trajectory')
     parser.add_argument('--fixed_maze_size', type=int, default=int(40), help='Size of generate maze')
     parser.add_argument('--batch_idx', type=int, default=int(-1), help='(Optional) Index of generated data batch')
-    parser.add_argument('--Twall_prob', type=np.float32, default=1.0, help='prob of T wall in the maze')
+    parser.add_argument('--coverage_frac', type=np.float32, default=0.25, help='occupancy rate of wall in maze')
+    parser.add_argument('--sample_vert_hor_prob', type=np.float32, default=0.5, help='prob of vertical wall in the maze')
     parser.add_argument('--seed', default=None, help='seed index')
     args = parser.parse_args()
     if args.agent_centric and not args.save_images:

@@ -125,11 +125,11 @@ def sample_2d(probs, rng):
     return idxs[0][0], idxs[1][0]
 
 
-def place_wall(maze_layout, rng, min_len_frac, max_len_frac, temp, T_wall=True):
+def place_wall(maze_layout, rng, min_len_frac, max_len_frac, temp, T_wall=True, sample_vert_hor_prob=0.5):
     """Samples wall such that overlap with other walls is minimized (overlap is determined by temperature).
        Also adds one door per wall."""
     size = maze_layout.shape[0]
-    sample_vert_hor = 0 if rng.random() < 0.5 else 1
+    sample_vert_hor = 0 if rng.random() < sample_vert_hor_prob else 1
     sample_len = int(max((max_len_frac-min_len_frac) * size * rng.random() + min_len_frac*size, 3))
     sample_door_offset = rng.choice(np.arange(1, sample_len - 1))
 
@@ -170,7 +170,8 @@ def sample_layout(seed=None,
                   min_len_frac=0.3,
                   coverage_frac=0.25,
                   temp=20,
-                  T_wall_prob=1):
+                  T_wall_prob=1,
+                  sample_vert_hor_prob=0.5):
     """
     Generates maze layout with randomly placed walls.
     :param seed: if not None, makes maze layout reproducible
@@ -186,7 +187,7 @@ def sample_layout(seed=None,
 
     while np.mean(maze_layout) < coverage_frac:
         T_wall = np.random.rand() < T_wall_prob
-        maze_layout = place_wall(maze_layout, rng, min_len_frac, max_len_frac, temp, T_wall)
+        maze_layout = place_wall(maze_layout, rng, min_len_frac, max_len_frac, temp, T_wall, sample_vert_hor_prob)
 
     return maze_layout
 
