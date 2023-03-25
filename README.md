@@ -4,7 +4,7 @@ python3 scripts/generate_randMaze2d_datasets.py --render --agent_centric --save_
 python3 scripts/generate_Twall_Maze2d_datasets.py --data_dir='./data_save'
 
 python3 scripts/generate_Twall_Maze2d_datasets.py  --agent_centric --save_images --data_dir='./data_save' \
---fixed_maze_size=20 --sample_vert_hor_prob=0 --coverage_frac=0.2 --num_samples=2000000 --batch_idx=0
+--fixed_maze_size=20 --Twall_prob=0 --sample_vert_hor_prob=0 --coverage_frac=0.2 --num_samples=2500000 --batch_idx=9
 
 <p align="center">
     <img src="https://raw.githubusercontent.com/jjshoots/D4RL/master/d4rl-text.png" width="500px"/>

@@ -84,6 +84,7 @@ def main():
     parser.add_argument('--min_traj_len', type=int, default=int(50), help='Min number of samples per trajectory')
     parser.add_argument('--fixed_maze_size', type=int, default=int(40), help='Size of generate maze')
     parser.add_argument('--batch_idx', type=int, default=int(-1), help='(Optional) Index of generated data batch')
+    parser.add_argument('--Twall_prob', type=np.float32, default=1, help='prob of T wall in the maze')
     parser.add_argument('--coverage_frac', type=np.float32, default=0.25, help='occupancy rate of wall in maze')
     parser.add_argument('--sample_vert_hor_prob', type=np.float32, default=0.5, help='prob of vertical wall in the maze')
     parser.add_argument('--seed', default=None, help='seed index')
