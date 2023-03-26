@@ -141,7 +141,8 @@ def main():
 
 
 def save_data(args, data, idx):
-    # save_video("seq_{}_ac.mp4".format(idx), data['images'])
+    save_video("seq_{}_ac.mp4".format(idx), data['images'])
+    
     dir_name = ''
     if args.batch_idx >= 0:
         dir_name = os.path.join(dir_name, "batch_{}".format(args.batch_idx))
