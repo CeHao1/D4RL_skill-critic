@@ -7,6 +7,24 @@ H_MAZE = \
         "#OOOOOOOOOOOOOOOOOO#\\"+\
         "####################"
 
+M_MAZE1 = \
+        "#################\\"+\
+        "#OOOOOO#OOOOOOO##\\"+\
+        "#OOOOOO#OO####O##\\"+\
+        "###OO###OOOOO#O##\\"+\
+        "#OOOOOO#OOOOO#O##\\"+\
+        "#OOO####OO####O##\\"+\
+        "#OO##OO#OO#OOOO##\\"+\
+        "#OOOOOO#OO#OOOO##\\"+\
+        "#OO#####OO#######\\"+\
+        "#OOOOOOOOOOOOOO##\\"+\
+        "#################\\"+\
+        "#################"
+
+maze_name_space= {
+    'h_maze' : H_MAZE,
+    'm_maze1' : M_MAZE1,
+}
 
 LARGE_MAZE = \
         "############\\"+\

@@ -41,7 +41,11 @@ def npify(data):
 
 
 def sample_env_and_controller(args):
-    layout_str = maze_layouts.rand_layout(seed=args.seed, size=args.fixed_maze_size, 
+    if args.manual_maze:
+        from d4rl.pointmaze.maze_strings import maze_name_space
+        layout_str = maze_name_space[args.manual_maze]
+    else:
+        layout_str = maze_layouts.rand_layout(seed=args.seed, size=args.fixed_maze_size, 
                                           coverage_frac = args.coverage_frac,
                                           T_wall_prob=args.Twall_prob, sample_vert_hor_prob=args.sample_vert_hor_prob)
     env = maze_model.MazeEnv(layout_str, agent_centric_view=args.agent_centric)
@@ -89,6 +93,7 @@ def main():
     parser.add_argument('--coverage_frac', type=np.float32, default=0.25, help='occupancy rate of wall in maze')
     parser.add_argument('--sample_vert_hor_prob', type=np.float32, default=0.5, help='prob of vertical wall in the maze')
     parser.add_argument('--seed', default=None, help='seed index')
+    parser.add_argument('--manual_maze', default=None, help='manually set maze layout')
     args = parser.parse_args()
     if args.agent_centric and not args.save_images:
         raise ValueError("Need to save images for agent-centric dataset")

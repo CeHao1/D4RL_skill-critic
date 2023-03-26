@@ -105,6 +105,5 @@ def rand_layout(seed=None, **kwargs):
     """Generates random layout with specified params (see 'sample_layout' function)."""
     rand_layout = sample_layout(seed, **kwargs)
     layout_str = layout2str(rand_layout)
-#     layout_str = H_MAZE
     return layout_str
 
