@@ -2,6 +2,14 @@ import numpy as np
 from scipy.signal import convolve2d
 import re
 
+H_MAZE = \
+        "####################\\"+\
+        "#000000000000000000#\\"+\
+        "#00#######000000000#\\"+\
+        "#00000000000#####00#\\"+\
+        "#000000000000000000#\\"+\
+        "####################\\"
+
 
 LARGE_MAZE = \
         "############\\"+\
@@ -209,7 +217,8 @@ def layout2str(layout):
 
 def rand_layout(seed=None, **kwargs):
     """Generates random layout with specified params (see 'sample_layout' function)."""
-    rand_layout = sample_layout(seed, **kwargs)
-    layout_str = layout2str(rand_layout)
+#     rand_layout = sample_layout(seed, **kwargs)
+#     layout_str = layout2str(rand_layout)
+    layout_str = H_MAZE
     return layout_str
 
