@@ -2,121 +2,7 @@ import numpy as np
 from scipy.signal import convolve2d
 import re
 
-H_MAZE = \
-        "####################\\"+\
-        "#000000000000000000#\\"+\
-        "#00#######000000000#\\"+\
-        "#00000000000#####00#\\"+\
-        "#000000000000000000#\\"+\
-        "####################\\"
-
-
-LARGE_MAZE = \
-        "############\\"+\
-        "#OOOO#OOOOO#\\"+\
-        "#O##O#O#O#O#\\"+\
-        "#OOOOOO#OOO#\\"+\
-        "#O####O###O#\\"+\
-        "#OO#O#OOOOO#\\"+\
-        "##O#O#O#O###\\"+\
-        "#OO#OOO#OGO#\\"+\
-        "############"
-
-LARGE_MAZE_EVAL = \
-        "############\\"+\
-        "#OO#OOO#OGO#\\"+\
-        "##O###O#O#O#\\"+\
-        "#OO#O#OOOOO#\\"+\
-        "#O##O#OO##O#\\"+\
-        "#OOOOOO#OOO#\\"+\
-        "#O##O#O#O###\\"+\
-        "#OOOO#OOOOO#\\"+\
-        "############"
-
-MEDIUM_MAZE = \
-        '########\\'+\
-        '#OO##OO#\\'+\
-        '#OO#OOO#\\'+\
-        '##OOO###\\'+\
-        '#OO#OOO#\\'+\
-        '#O#OO#O#\\'+\
-        '#OOO#OG#\\'+\
-        "########"
-
-MEDIUM_MAZE_EVAL = \
-        '########\\'+\
-        '#OOOOOG#\\'+\
-        '#O#O##O#\\'+\
-        '#OOOO#O#\\'+\
-        '###OO###\\'+\
-        '#OOOOOO#\\'+\
-        '#OO##OO#\\'+\
-        "########"
-
-SMALL_MAZE = \
-        "######\\"+\
-        "#OOOO#\\"+\
-        "#O##O#\\"+\
-        "#OOOO#\\"+\
-        "######"
-
-U_MAZE = \
-        "#####\\"+\
-        "#GOO#\\"+\
-        "###O#\\"+\
-        "#OOO#\\"+\
-        "#####"
-
-U_MAZE_EVAL = \
-        "#####\\"+\
-        "#OOG#\\"+\
-        "#O###\\"+\
-        "#OOO#\\"+\
-        "#####"
-
-OPEN = \
-        "#######\\"+\
-        "#OOOOO#\\"+\
-        "#OOGOO#\\"+\
-        "#OOOOO#\\"+\
-        "#######"
-
-HARD_EXP_MAZE = \
-        "#####################\\"+\
-        "#OOOO#OOOO#OOOO#OOOO#\\"+\
-        "#OOO###OOO#OOO###OOO#\\"+\
-        "#OOOOOOOOO#OOOOOOOOO#\\"+\
-        "#OOO###OOO#OOO###OOO#\\"+\
-        "#OOOO#OOOO#OOOO#OOOO#\\"+\
-        "#OOOO#OOO###OOO#OOOO#\\"+\
-        "#OOOO#OOOOOOOOO#OOOO#\\"+\
-        "#OOOO#OOO###OOO#OOOO#\\"+\
-        "#OOOO#OOOO#OOOO#OOOG#\\"+\
-        "#####################"
-
-
-HARD_EXP_MAZE_V2 = \
-        "#####################\\"+\
-        "#OOOO#OOOO#OOOO#OOOO#\\"+\
-        "#OOO###OOO#OOO###OOO#\\"+\
-        "#OOOOOOOOO#OOOOOOOOO#\\"+\
-        "#OOO###OOO#OOO###OOO#\\"+\
-        "#OOOO#OOOO#OOOO#OOOO#\\"+\
-        "#OOOO#OOO###OOO#OOOO#\\"+\
-        "#OOOO#OOOOOOOOO#OOOO#\\"+\
-        "#OOOO#OOO###OOO#OOOO#\\"+\
-        "#OOOO#OOOO#OOOO#OOOO#\\"+\
-        "#################OG##\\"+\
-        "#OOOO#OOOO#OOOO#OOOO#\\"+\
-        "#OOOO#OOO###OOO#OOOO#\\"+\
-        "#OOOO#OOOOOOOOO#OOOO#\\"+\
-        "#OOOO#OOO###OOO#OOOO#\\"+\
-        "#OOOO#OOOO#OOOO#OOOO#\\"+\
-        "#OOO###OOO#OOO###OOO#\\"+\
-        "#OOOOOOOOO#OOOOOOOOO#\\"+\
-        "#OOO###OOO#OOO###OOO#\\"+\
-        "#OOOO#OOOO#OOOO#OOOO#\\"+\
-        "#####################"
+from .maze_strings import *
 
 
 def compute_sampling_probs(maze_layout, filter, temp):
@@ -217,8 +103,8 @@ def layout2str(layout):
 
 def rand_layout(seed=None, **kwargs):
     """Generates random layout with specified params (see 'sample_layout' function)."""
-#     rand_layout = sample_layout(seed, **kwargs)
-#     layout_str = layout2str(rand_layout)
-    layout_str = H_MAZE
+    rand_layout = sample_layout(seed, **kwargs)
+    layout_str = layout2str(rand_layout)
+#     layout_str = H_MAZE
     return layout_str
 

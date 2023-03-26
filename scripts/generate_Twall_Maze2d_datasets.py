@@ -79,6 +79,7 @@ def main():
     parser.add_argument('--noisy', action='store_true', help='Noisy actions')
     parser.add_argument('--agent_centric', action='store_true', help='Whether agent-centric images are rendered.')
     parser.add_argument('--save_images', action='store_true', help='Whether rendered images are saved.')
+    parser.add_argument('--save_video', action='store_true', help='Whether rendered videos are saved.')
     parser.add_argument('--data_dir', type=str, default='.', help='Base directory for dataset')
     parser.add_argument('--num_samples', type=int, default=int(2e5), help='Num samples to collect')
     parser.add_argument('--min_traj_len', type=int, default=int(50), help='Min number of samples per trajectory')
@@ -141,8 +142,9 @@ def main():
 
 
 def save_data(args, data, idx):
-    save_video("seq_{}_ac.mp4".format(idx), data['images'])
-    
+    if args.save_video:
+        save_video("seq_{}_ac.mp4".format(idx), data['images'])
+
     dir_name = ''
     if args.batch_idx >= 0:
         dir_name = os.path.join(dir_name, "batch_{}".format(args.batch_idx))
