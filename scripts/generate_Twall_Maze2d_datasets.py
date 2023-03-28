@@ -56,6 +56,13 @@ def sample_env_and_controller(args):
 def reset_env(env, agent_centric=False):
     s = env.reset()
     env.set_target()
+    
+    # TARGET_POS = np.array([7, 13])
+    # START_POS = np.array([1, 2])
+    
+    # env.set_target(TARGET_POS)
+    # env.reset_to_location(START_POS)
+    
     if agent_centric:
         [env.render(mode='rgb_array') for _ in range(100)]    # so that camera can catch up with agent
     return s
@@ -92,7 +99,7 @@ def main():
     parser.add_argument('--Twall_prob', type=np.float32, default=1, help='prob of T wall in the maze')
     parser.add_argument('--coverage_frac', type=np.float32, default=0.25, help='occupancy rate of wall in maze')
     parser.add_argument('--sample_vert_hor_prob', type=np.float32, default=0.5, help='prob of vertical wall in the maze')
-    parser.add_argument('--seed', default=None, help='seed index')
+    parser.add_argument('--seed', type=int, default=None, help='seed index')
     parser.add_argument('--manual_maze', default=None, help='manually set maze layout')
     args = parser.parse_args()
     if args.agent_centric and not args.save_images:

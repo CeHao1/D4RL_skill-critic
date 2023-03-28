@@ -126,13 +126,15 @@ class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
         self.empty_and_goal_locations = self.reset_locations + self.goal_locations
 
     def step(self, action):
+        target_dist_threshold = 1.0 # used to 2.0
+        
         action = np.clip(action, -1.0, 1.0)
         self.clip_velocity()
         self.do_simulation(action, self.frame_skip)
         self.set_marker()
         ob = self._get_obs()
         if self.reward_type == 'sparse':
-            reward = 1.0 if np.linalg.norm(ob[0:2] - self._target) <= 2.0 else 0.0
+            reward = 1.0 if np.linalg.norm(ob[0:2] - self._target) <= target_dist_threshold else 0.0
         elif self.reward_type == 'dense':
             reward = np.exp(-np.linalg.norm(ob[0:2] - self._target))
         else:
