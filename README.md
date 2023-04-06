@@ -8,7 +8,7 @@ python3 scripts/generate_Twall_Maze2d_datasets.py  --agent_centric --save_images
 
 ### fixed horizontal maze
 python3 scripts/generate_Twall_Maze2d_datasets.py  --agent_centric --save_images --data_dir='./data_save' \
---num_samples=1000000 --batch_idx=3
+--num_samples=1000000 --batch_idx=0
 
 
 <p align="center">

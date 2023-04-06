@@ -1,5 +1,5 @@
 from gym.envs.registration import register
-from d4rl.gym_bullet import gym_envs
+# from d4rl.gym_bullet import gym_envs
 from d4rl import infos
 
 
